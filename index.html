@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resistor CAI</title>
+<!-- เรียกใช้งาน SweetAlert2 สำหรับสร้างสไลด์ Popup -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- เรียกใช้งาน Font Awesome สำหรับไอคอน -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* CSS Variables สำหรับจัดการธีม */
         :root {
@@ -143,8 +147,8 @@
     <h1>ระบบเรียนรู้ตัวต้านทาน (Interactive Resistor CAI)</h1>
     
     <div class="controls">
-        <label><input type="radio" name="bandCount" value="3" onchange="changeBandCount(3)"checked> 3 แถบ</label>
-        <label><input type="radio" name="bandCount" value="4" onchange="changeBandCount(4)"> 4 แถบ</label>
+        <label><input type="radio" name="bandCount" value="3" onchange="changeBandCount(3)"> 3 แถบ</label>
+        <label><input type="radio" name="bandCount" value="4" onchange="changeBandCount(4)"checked> 4 แถบ</label>
         <label><input type="radio" name="bandCount" value="5" onchange="changeBandCount(5)"> 5 แถบ</label>
         <label><input type="radio" name="bandCount" value="6" onchange="changeBandCount(6)"> 6 แถบ</label>
     </div>
@@ -519,6 +523,137 @@
     }
 
     window.onload = function() { renderUI('ui'); };
+</script>
+<script>
+    // --- สคริปต์ส่วนของระบบสไลด์แนะนำ (Intro Slides) ---
+    const introSlides = [
+        {
+            title: '<span style="color:#2c3e50;">ยินดีต้อนรับสู่ </br> ระบบเรียนรู้ตัวต้านทาน </br>(Interactive Resistor CAI) </span>',
+            html: `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <i class="fas fa-bolt" style="font-size: 50px; color: #f1c40f; text-shadow: 0 0 10px rgba(241,196,15,0.5);"></i>
+                </div>
+                <h3 style="color:#2980b9; margin-bottom: 10px;">ทบทวน "กฎของโอห์ม" (Ohm's Law)</h3>
+		<h4 style="color:#5473ff; margin-bottom: 8 px:">Developed by : Suthin Chanidthai</h4>
+                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
+                    ก่อนที่เราจะไปเล่นโปรแกรมจำลอง ลองนึกภาพกระแสไฟฟ้าเหมือน <b>"น้ำไหลในท่อ"</b> <br><br>
+                    กฎของโอห์ม อธิบายความสัมพันธ์ของ 3 ตัวละครหลักในวงจรไฟฟ้า ซึ่งก็คือ <b>แรงดัน (V), กระแส (I), และความต้านทาน (R)</b> <br><br>
+                    สไลด์ต่อไปนี้จะช่วยปูพื้นฐานสั้นๆ ให้ทุกคนพร้อมลุยกับวงจรของจริง!
+                </p>`,
+            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>'
+        },
+        {
+            title: '<span style="color:#e74c3c;">V - Voltage (แรงดันไฟฟ้า)</span>',
+            html: `
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <i class="fas fa-car-battery" style="font-size: 45px; color: #e74c3c;"></i>
+                </div>
+                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
+                    <b>แรงดันไฟฟ้า</b> มีหน่วยเป็น <b>โวลต์ (V)</b> <br>
+                    เปรียบเสมือน <b>"ปั๊มน้ำ"</b> หรือ <b>"แรงดันน้ำ"</b> ที่คอยผลักดันให้น้ำ (ประจุไฟฟ้า) ไหลไปตามท่อ<br><br>
+                    <i>ถ่านไฟฉาย AA 1 ก้อน มีแรงดัน 1.5V, แบตเตอรี่รถยนต์มี 12V ยิ่งแรงดันมาก พลังผลักดันกระแสไฟก็ยิ่งสูง</i>
+                </p>`,
+            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>',
+            showCancelButton: true,
+            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
+        },
+        {
+            title: '<span style="color:#3498db;">I - Current (กระแสไฟฟ้า)</span>',
+            html: `
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <i class="fas fa-water" style="font-size: 45px; color: #3498db;"></i>
+                </div>
+                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
+                    <b>กระแสไฟฟ้า</b> มีหน่วยเป็น <b>แอมแปร์ (A)</b> <br>
+                    เปรียบเสมือน <b>"ปริมาณน้ำ"</b> ที่ไหลอยู่ในท่อจริงๆ<br><br>
+                    <i>กระแสไฟฟ้านี้แหละที่ทำให้อุปกรณ์ไฟฟ้าทำงานได้ แต่ถ้ากระแสไหลเข้ามามากเกินไป อุปกรณ์ก็จะ "พัง" หรือ "ไหม้" ได้เช่นกัน!</i>
+                </p>`,
+            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>',
+            showCancelButton: true,
+            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
+        },
+        {
+            title: '<span style="color:#27ae60;">R - Resistance (ความต้านทาน)</span>',
+            html: `
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <i class="fas fa-road-barrier" style="font-size: 45px; color: #27ae60;"></i>
+                </div>
+                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
+                    <b>ความต้านทาน</b> มีหน่วยเป็น <b>โอห์ม (Ω)</b> <br>
+                    เปรียบเสมือน <b>"วาล์วหรี่น้ำ"</b> หรือ <b>"ท่อที่ตีบแคบลง"</b><br><br>
+                    <i>ตัวต้านทานทำหน้าที่ขัดขวางการไหลของกระแสไฟ เพื่อช่วยจำกัดไม่ให้ไฟไหลเข้าอุปกรณ์มากเกินไปนั่นเอง!</i>
+                </p>`,
+            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>',
+            showCancelButton: true,
+            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
+        },
+        {
+            title: '<span style="color:#8e44ad;">สมการที่เกี่ยวข้อง</span>',
+            html: `
+                <div style="text-align: center; margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #8e44ad;">
+                    <h2 style="margin: 0; color: #8e44ad;">V = I × R</h2>
+                </div>
+                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
+                    นี่คือสมการหัวใจหลัก! จากสูตรนี้ เราสามารถสลับข้างเพื่อหาตัวที่ต้องการได้:<br><br>
+                    <b style="color:#3498db;">• หาแอมป์:</b> I = V / R (กระแส จะน้อยลง ถ้าความต้านทานมากขึ้น)<br>
+                    <b style="color:#27ae60;">• หาโอห์ม:</b> R = V / I (ความต้านทานที่ต้องใช้ตัดไฟ)<br>
+                </p>`,
+            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>',
+            showCancelButton: true,
+            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
+        },
+        {
+            title: '<span style="color:#d35400;">คู่มือการใช้งาน UI เบื้องต้น</span>',
+            html: `
+                <div style="font-size: 15px; line-height: 1.6; color:#555; text-align: left; padding: 10px; background:#fef9e7; border-radius:8px;">
+                    <b>1. อ่านค่าแถบสี:</b> ลองคลิกเปลี่ยนแถบสีบนตัวต้านทาน 🎨 หรือพิมพ์เลขลงในช่อง เพื่อดูสมการแปลงรหัสสี<br><br>
+                    <b>2. โปรแกรมจำลอง:</b> ลองปรับ <b>"แรงดัน Input" (V)</b> สังเกตความเร็วของจุดสีฟ้า(อิเล็กตรอน)ที่วิ่งในวงจร ⚡ ยิ่งกระแส(I)มาก จุดยิ่งวิ่งเร็ว<br><br>
+                    <b>3. ออกแบบวงจร:</b> เลื่อนไปโหมดคำนวณด้านล่างสุด กรอกสเปคหลอด LED แล้วให้ระบบคำนวณหาค่า R ให้อัตโนมัติ 💡
+                </div>`,
+            confirmButtonText: '<i class="fas fa-play"></i> เริ่มใช้งานโปรแกรม!',
+            showCancelButton: true,
+            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
+        }
+    ];
+
+    let currentSlide = 0;
+
+    function showSlide(index) {
+        if (index < 0 || index >= introSlides.length) return;
+        
+        Swal.fire({
+            ...introSlides[index],
+            width: '600px',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showCloseButton: true,
+            confirmButtonColor: '#3498db',
+            cancelButtonColor: '#95a5a6',
+            reverseButtons: true // เพิ่มคำสั่งนี้เพื่อสลับตำแหน่งปุ่ม ซ้าย-ขวา
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (index < introSlides.length - 1) {
+                    currentSlide++;
+                    showSlide(currentSlide);
+                } else {
+                    // ปิดสไลด์ จบการแนะนำ
+                }
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                if (index > 0) {
+                    currentSlide--;
+                    showSlide(currentSlide);
+                }
+            }
+        });
+    }
+
+    // เรียกให้สไลด์แสดงขึ้นมาทันทีเมื่อโหลดหน้าเว็บเสร็จ
+    window.addEventListener('load', function() {
+        // ดีเลย์นิดหน่อยเพื่อให้หน้าเว็บหลักโหลดเสร็จสมบูรณ์ก่อน
+        setTimeout(() => {
+            showSlide(currentSlide);
+        }, 500);
+    });
 </script>
 </body>
 </html>
