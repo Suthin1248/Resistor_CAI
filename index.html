@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resistor CAI</title>
-<!-- เรียกใช้งาน SweetAlert2 สำหรับสร้างสไลด์ Popup -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- เรียกใช้งาน Font Awesome สำหรับไอคอน -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -27,6 +25,155 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg-main); color: var(--text-main); margin: 0; padding: 20px; transition: 0.3s; }
         .container { max-width: 850px; margin: 0 auto; background: var(--bg-container); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: 0.3s; position: relative; }
         h1 { text-align: center; color: var(--text-heading); margin-bottom: 20px; font-size: 26px; }
+
+        /* =========================================
+           ส่วนของ Home Page (Slide System)
+           ========================================= */
+        #home-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+
+        /* เมนูหลัก */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 30px;
+        }
+        .menu-btn {
+            background: #ffffff;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #34495e;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        body.dark-mode .menu-btn {
+            background: #252525;
+            border-color: #333;
+            color: #e0e0e0;
+        }
+        .menu-btn i { font-size: 30px; }
+        .menu-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .menu-btn.v-color { border-bottom: 4px solid #e74c3c; } .menu-btn.v-color i { color: #e74c3c; }
+        .menu-btn.i-color { border-bottom: 4px solid #3498db; } .menu-btn.i-color i { color: #3498db; }
+        .menu-btn.r-color { border-bottom: 4px solid #27ae60; } .menu-btn.r-color i { color: #27ae60; }
+        .menu-btn.eq-color { border-bottom: 4px solid #8e44ad; } .menu-btn.eq-color i { color: #8e44ad; }
+        .menu-btn.ui-color { border-bottom: 4px solid #f39c12; } .menu-btn.ui-color i { color: #f39c12; }
+        .menu-btn.start-color { 
+            grid-column: span 2; 
+            background: #3498db; 
+            color: white; 
+            border: none;
+            padding: 25px;
+            font-size: 18px;
+        }
+        body.dark-mode .menu-btn.start-color { background: #2980b9; }
+        .menu-btn.start-color i { color: white; }
+        .menu-btn.start-color:hover { background: #2980b9; }
+
+        /* หน้าแสดงเนื้อหาแต่ละเรื่อง (Slide Content) */
+        .slide-content-view {
+            display: none; /* ซ่อนไว้ก่อน */
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
+            text-align: center;
+            animation: fadeIn 0.4s ease-in-out;
+            position: relative; /* สำหรับให้ปุ่ม back ลอยอยู่บนซ้าย */
+            padding-top: 40px; /* เว้นที่ให้ปุ่ม back */
+        }
+        .slide-content-view h2 { margin-bottom: 30px; font-size: 28px; }
+        .slide-content-view p { font-size: 18px; line-height: 1.8; color: var(--text-main); text-align: justify; }
+        
+        /* ปุ่มกลับหน้าแรก (มุมซ้ายบน) */
+        .btn-top-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: transparent;
+            border: none;
+            color: #95a5a6;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+        .btn-top-back:hover {
+            color: #34495e;
+            background: #ecf0f1;
+        }
+        body.dark-mode .btn-top-back:hover {
+            color: #ecf0f1;
+            background: #333;
+        }
+
+        /* ปุ่ม ย้อนกลับ - ถัดไป (ด้านล่าง) */
+        .slide-nav-btns {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            width: 100%;
+        }
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            min-width: 140px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-prev { background: #ecf0f1; color: #7f8c8d; }
+        .btn-prev:hover { background: #bdc3c7; color: #2c3e50; }
+        body.dark-mode .btn-prev { background: #333; color: #aaa; }
+        body.dark-mode .btn-prev:hover { background: #444; color: #fff; }
+        
+        .btn-next { background: #3498db; color: white; }
+        .btn-next:hover { background: #2980b9; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================
+           ส่วนของ CAI App (ซ่อนไว้ก่อน)
+           ========================================= */
+        #app-container {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* -----------------------------------------*/
         
         /* Theme Switcher */
         .theme-switch-wrapper { position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 10px; font-weight: bold; }
@@ -98,39 +245,13 @@
             100% { left: 0%; top: 0%; transform: translate(-50%, -50%); }
         }
 
-        /* -------------------------------------------
-           ส่วนของ Footer สัญญาอนุญาต Creative Commons 
-           ------------------------------------------- */
-        .footer-cc {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border-panel);
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-sub);
-            line-height: 1.6;
-        }
-        .footer-cc .cc-icons {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-        .footer-cc .cc-icons img {
-            height: 26px;
-            transition: 0.2s;
-        }
-        .footer-cc .cc-icons img:hover {
-            transform: scale(1.1);
-        }
-        .footer-cc a {
-            color: var(--text-heading);
-            font-weight: bold;
-            text-decoration: none;
-        }
-        .footer-cc a:hover {
-            text-decoration: underline;
-        }
+        /* Footer CC */
+        .footer-cc { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-panel); text-align: center; font-size: 13px; color: var(--text-sub); line-height: 1.6; }
+        .footer-cc .cc-icons { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; }
+        .footer-cc .cc-icons img { height: 26px; transition: 0.2s; }
+        .footer-cc .cc-icons img:hover { transform: scale(1.1); }
+        .footer-cc a { color: var(--text-heading); font-weight: bold; text-decoration: none; }
+        .footer-cc a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -144,122 +265,190 @@
         </label>
     </div>
 
-    <h1>ระบบเรียนรู้ตัวต้านทาน (Interactive Resistor CAI)</h1>
-    
-    <div class="controls">
-        <label><input type="radio" name="bandCount" value="3" onchange="changeBandCount(3)"> 3 แถบ</label>
-        <label><input type="radio" name="bandCount" value="4" onchange="changeBandCount(4)"checked> 4 แถบ</label>
-        <label><input type="radio" name="bandCount" value="5" onchange="changeBandCount(5)"> 5 แถบ</label>
-        <label><input type="radio" name="bandCount" value="6" onchange="changeBandCount(6)"> 6 แถบ</label>
-    </div>
-
-    <!-- แผงควบคุมหลัก -->
-    <div class="two-way-panel">
-        <div>
-            <h3>1. กรณีไม่ทราบสี (ใส่ตัวเลขเพื่อหาสี)</h3>
-            <div class="input-row" style="margin-top: 8px;">
-                <input type="number" id="manual-val" placeholder="เช่น 4.7" step="any" oninput="updateColorsFromNumber()">
-                <select id="manual-unit" onchange="updateColorsFromNumber()">
-                    <option value="1">Ω (โอห์ม)</option>
-                    <option value="1000">kΩ (กิโลโอห์ม)</option>
-                    <option value="1000000">MΩ (เมกะโอห์ม)</option>
-                </select>
-            </div>
-        </div>
-        <hr style="width: 100%; border: 0.5px solid var(--border-panel); margin: 0;">
-        <div>
-            <h3>2. กรณีไม่ทราบเลข (เลือกแถบสีเพื่อคำนวณ)</h3>
-            <div class="band-dropdowns" id="band-select-container"></div>
-        </div>
-    </div>
-
-    <div class="resistor-wrapper">
-        <div class="wire"></div>
-        <div class="resistor-body" id="resistor-body"></div>
-        <div class="wire"></div>
-        <div id="color-picker"></div>
-    </div>
-
-    <div class="breakdown">
-        <h2 id="result-value">0 kΩ</h2>
-        <p id="result-equation">กำลังโหลดสมการ...</p>
-    </div>
-
-    <!-- Simulator Dashboard -->
-    <div class="io-section">
-        <div class="input-group">
-            <label>แรงดันแหล่งจ่าย (Vin)</label>
-            <div style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 5px;">
-                <input type="number" id="input-v" value="9" min="1" oninput="calculate('simulator')"> <b>V</b>
-            </div>
-            <div class="info-note" style="background: transparent; border: none; color: var(--text-sub);">
-                ปรับค่าไฟเข้าวงจรที่นี่
-            </div>
+    <!-- ==============================================
+         หน้าเมนูหลัก (Home Page)
+         ============================================== -->
+    <div id="home-page">
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <i class="fas fa-bolt" style="font-size: 50px; color: #f1c40f; text-shadow: 0 0 10px rgba(241,196,15,0.5);"></i>
         </div>
         
-        <div class="input-group">
-            <label>กระแสในวงจร (I)</label>
-            <h2 id="output-i" style="margin: 5px 0 0 0; color: #3498db; font-size: 24px;">0 mA</h2>
-            <div class="info-note">
-                (ไหลผ่าน R และ โหลด)
-            </div>
-        </div>
-
-        <div class="input-group">
-            <label>แรงดันตกถึงโหลด (V_out)</label>
-            <h2 id="output-v" style="margin: 5px 0 0 0; color: #27ae60; font-size: 24px;">0 V</h2>
-            <div id="v-warning" style="font-size: 13px; font-weight: bold; margin-top: 5px;"></div>
-            <div class="info-note">
-                ไฟถูก R ดรอปทิ้งไป = <span id="v-drop" style="font-weight:bold;">0</span> V
-            </div>
-        </div>
-    </div>
-
-    <!-- Circuit Simulator Graphic -->
-    <div class="circuit-container">
-        <div class="wire-path" id="wire-path">
-            <div class="voltage-node node-in" id="node-in-label">+9 V</div>
-            <div class="voltage-node node-mid" id="node-mid-label">เหลือ +2 V</div>
-            <div class="voltage-node node-out" id="node-out-label">0 V (GND)</div>
-
-            <div class="electron" id="e1"></div>
-            <div class="electron" id="e2" style="animation-delay: -1s;"></div>
-            <div class="electron" id="e3" style="animation-delay: -2s;"></div>
-
-            <div class="component-box battery" id="battery-label">9V</div>
-            <div class="component-box resistor-label" id="circuit-r-label">R = 1 kΩ</div>
-            <div class="component-box load-label" id="load-label-text">โหลด<br>(2V)</div>
-        </div>
-    </div>
-
-    <!-- ส่วนประยุกต์ใช้งาน -->
-    <div class="two-way-panel" style="margin-top: 30px; margin-bottom: 0;">
-        <h3>⚡ 3. การประยุกต์ใช้งาน: คำนวณ R สำหรับต่ออุปกรณ์ (Voltage Dropper)</h3>
-        <p style="font-size: 14px; color: var(--text-sub); margin-top: 5px; margin-bottom: 12px;">
-            หากคุณต้องการต่ออุปกรณ์ที่กินไฟน้อยกว่าแหล่งจ่าย (เช่น หลอดไฟ LED) คุณสามารถกรอกสเปคของอุปกรณ์ด้านล่าง ระบบจะคำนวณค่าตัวต้านทานที่ต้องใช้เพื่อดรอปไฟส่วนเกินทิ้ง และปรับวงจรด้านบนให้โดยอัตโนมัติ
+        <h1 style="margin-bottom: 5px;">ระบบเรียนรู้ตัวต้านทาน</h1>
+        <h2 style="color: var(--text-sub); margin-top: 0; font-size: 20px;">(Interactive Resistor CAI)</h2>
+        <h4 style="color:#5473ff; margin-top: 10px; margin-bottom: 20px;">Developed by : Suthin Chanidthai</h4>
+        
+        <p style="text-align: center; max-width: 600px; line-height: 1.6;">
+            ยินดีต้อนรับ! เลือกศึกษาเนื้อหาทบทวนกฎของโอห์มตามลำดับด้านล่าง<br>หรือกดข้ามไปยังตัวโปรแกรมเพื่อเริ่มออกแบบวงจรได้เลย
         </p>
-        <div class="input-row" style="justify-content: flex-start; background: var(--bg-controls); padding: 15px; border-radius: 8px;">
-            <label style="font-size: 14px; font-weight: bold;">อุปกรณ์ต้องการไฟ: <input type="number" id="target-vload" value="5" step="0.1" style="width:70px; text-align:center;" oninput="calculate('simulator')"> V</label>
-            <label style="font-size: 14px; font-weight: bold; margin-left: 10px;">กินกระแสไฟ: <input type="number" id="target-iload" value="20" step="1" style="width:70px; text-align:center;" oninput="calculate('simulator')"> mA</label>
-            <button class="btn-calc" onclick="calculateRForLoad()" style="margin-left: 15px;">🔍 คำนวณค่า R อัตโนมัติ</button>
+
+        <!-- ตารางเมนูเลือก -->
+        <div class="menu-grid">
+            <button class="menu-btn v-color" onclick="openSlide(0)">
+                <i class="fas fa-car-battery"></i> 1. แนะนำ V (แรงดัน)
+            </button>
+            <button class="menu-btn i-color" onclick="openSlide(1)">
+                <i class="fas fa-water"></i> 2. แนะนำ I (กระแส)
+            </button>
+            <button class="menu-btn r-color" onclick="openSlide(2)">
+                <i class="fas fa-road-barrier"></i> 3. แนะนำ R (ความต้านทาน)
+            </button>
+            <button class="menu-btn eq-color" onclick="openSlide(3)">
+                <i class="fas fa-calculator"></i> 4. สมการที่เกี่ยวข้อง
+            </button>
+            <button class="menu-btn ui-color" style="grid-column: span 2;" onclick="openSlide(4)">
+                <i class="fas fa-mouse-pointer"></i> 5. แนะนำการใช้งาน UI
+            </button>
+            <button class="menu-btn start-color" onclick="startApp()">
+                <i class="fas fa-play-circle"></i> 6. ไปยังโปรแกรมการคำนวณ
+            </button>
         </div>
     </div>
 
-    <!-- ส่วน Footer อ้างอิงสิทธิ์ (Creative Commons) ที่เพิ่มเข้ามาใหม่ -->
+    <!-- ==============================================
+         หน้าแสดงเนื้อหาสไลด์ (ซ่อนไว้ก่อน)
+         ============================================== -->
+    <div id="slide-view" class="slide-content-view">
+        <!-- ปุ่มมุมซ้ายบน -->
+        <button class="btn-top-back" onclick="goHome()">
+            <i class="fas fa-chevron-left"></i> กลับหน้าแรก
+        </button>
+
+        <div id="slide-content-area" style="width: 100%;">
+            <!-- เนื้อหา HTML ของสไลด์จะถูกแทรกที่นี่ผ่าน JS -->
+        </div>
+        
+        <!-- แผงปุ่ม ย้อนกลับ / ถัดไป -->
+        <div class="slide-nav-btns">
+            <!-- ปุ่มย้อนกลับ -->
+            <button id="btn-prev-slide" class="nav-btn btn-prev" onclick="prevSlide()">
+                <i class="fas fa-arrow-left"></i> ย้อนกลับ
+            </button>
+
+            <!-- ปุ่มถัดไป -->
+            <button id="btn-next-slide" class="nav-btn btn-next" onclick="nextSlide()">
+                หน้าถัดไป <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ==============================================
+         หน้าแอปพลิเคชัน CAI หลัก (ซ่อนไว้ก่อน)
+         ============================================== -->
+    <div id="app-container">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <button class="btn-top-back" style="position: static;" onclick="goHome()">
+                <i class="fas fa-chevron-left"></i> กลับหน้าแรก
+            </button>
+            <h2 style="margin: 0; color: var(--text-heading); font-size: 22px;">โปรแกรมคำนวณแถบสีวงจร</h2>
+            <div style="width: 100px;"></div> <!-- Dummy box เพื่อจัดกึ่งกลาง h2 -->
+        </div>
+
+        <div class="controls">
+            <label><input type="radio" name="bandCount" value="3" onchange="changeBandCount(3)"> 3 แถบ</label>
+            <label><input type="radio" name="bandCount" value="4" onchange="changeBandCount(4)" checked> 4 แถบ</label>
+            <label><input type="radio" name="bandCount" value="5" onchange="changeBandCount(5)"> 5 แถบ</label>
+        </div>
+
+        <div class="two-way-panel">
+            <div>
+                <h3>1. กรณีไม่ทราบสี (ใส่ตัวเลขเพื่อหาสี)</h3>
+                <div class="input-row" style="margin-top: 8px;">
+                    <input type="number" id="manual-val" placeholder="เช่น 4.7" step="any" oninput="updateColorsFromNumber()">
+                    <select id="manual-unit" onchange="updateColorsFromNumber()">
+                        <option value="1">Ω (โอห์ม)</option>
+                        <option value="1000">kΩ (กิโลโอห์ม)</option>
+                        <option value="1000000">MΩ (เมกะโอห์ม)</option>
+                    </select>
+                </div>
+            </div>
+            <hr style="width: 100%; border: 0.5px solid var(--border-panel); margin: 0;">
+            <div>
+                <h3>2. กรณีไม่ทราบเลข (เลือกแถบสีเพื่อคำนวณ)</h3>
+                <div class="band-dropdowns" id="band-select-container"></div>
+            </div>
+        </div>
+
+        <div class="resistor-wrapper">
+            <div class="wire"></div>
+            <div class="resistor-body" id="resistor-body"></div>
+            <div class="wire"></div>
+            <div id="color-picker"></div>
+        </div>
+
+        <div class="breakdown">
+            <h2 id="result-value">0 kΩ</h2>
+            <p id="result-equation">กำลังโหลดสมการ...</p>
+        </div>
+
+        <div class="io-section">
+            <div class="input-group">
+                <label>แรงดันแหล่งจ่าย (Vin)</label>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 5px;">
+                    <input type="number" id="input-v" value="9" min="1" oninput="calculate('simulator')"> <b>V</b>
+                </div>
+                <div class="info-note" style="background: transparent; border: none; color: var(--text-sub);">ปรับค่าไฟเข้าวงจรที่นี่</div>
+            </div>
+            
+            <div class="input-group">
+                <label>กระแสในวงจร (I)</label>
+                <h2 id="output-i" style="margin: 5px 0 0 0; color: #3498db; font-size: 24px;">0 mA</h2>
+                <div class="info-note">(ไหลผ่าน R และ โหลด)</div>
+            </div>
+
+            <div class="input-group">
+                <label>แรงดันตกถึงโหลด (V_out)</label>
+                <h2 id="output-v" style="margin: 5px 0 0 0; color: #27ae60; font-size: 24px;">0 V</h2>
+                <div id="v-warning" style="font-size: 13px; font-weight: bold; margin-top: 5px;"></div>
+                <div class="info-note">ไฟถูก R ดรอปทิ้งไป = <span id="v-drop" style="font-weight:bold;">0</span> V</div>
+            </div>
+        </div>
+
+        <div class="circuit-container">
+            <div class="wire-path" id="wire-path">
+                <div class="voltage-node node-in" id="node-in-label">+9 V</div>
+                <div class="voltage-node node-mid" id="node-mid-label">เหลือ +2 V</div>
+                <div class="voltage-node node-out" id="node-out-label">0 V (GND)</div>
+
+                <div class="electron" id="e1"></div>
+                <div class="electron" id="e2" style="animation-delay: -1s;"></div>
+                <div class="electron" id="e3" style="animation-delay: -2s;"></div>
+
+                <div class="component-box battery" id="battery-label">9V</div>
+                <div class="component-box resistor-label" id="circuit-r-label">R = 1 kΩ</div>
+                <div class="component-box load-label" id="load-label-text">โหลด<br>(2V)</div>
+            </div>
+        </div>
+
+        <div class="two-way-panel" style="margin-top: 30px; margin-bottom: 0;">
+            <h3>⚡ 3. การประยุกต์ใช้งาน: คำนวณ R สำหรับต่ออุปกรณ์ (Voltage Dropper)</h3>
+            <p style="font-size: 14px; color: var(--text-sub); margin-top: 5px; margin-bottom: 12px;">
+                หากคุณต้องการต่ออุปกรณ์ที่กินไฟน้อยกว่าแหล่งจ่าย (เช่น หลอดไฟ LED) คุณสามารถกรอกสเปคของอุปกรณ์ด้านล่าง ระบบจะคำนวณค่าตัวต้านทานที่ต้องใช้เพื่อดรอปไฟส่วนเกินทิ้ง และปรับวงจรด้านบนให้โดยอัตโนมัติ
+            </p>
+            <div class="input-row" style="justify-content: flex-start; background: var(--bg-controls); padding: 15px; border-radius: 8px;">
+                <label style="font-size: 14px; font-weight: bold;">อุปกรณ์ต้องการไฟ: <input type="number" id="target-vload" value="5" step="0.1" style="width:70px; text-align:center;" oninput="calculate('simulator')"> V</label>
+                <label style="font-size: 14px; font-weight: bold; margin-left: 10px;">กินกระแสไฟ: <input type="number" id="target-iload" value="20" step="1" style="width:70px; text-align:center;" oninput="calculate('simulator')"> mA</label>
+                <button class="btn-calc" onclick="calculateRForLoad()" style="margin-left: 15px;">🔍 คำนวณค่า R อัตโนมัติ</button>
+            </div>
+        </div>
+
+    </div> <!-- ปิด app-container -->
+
+    <!-- Footer CC -->
     <div class="footer-cc">
         <div class="cc-icons">
             <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank">
-                <!-- โลโก้ CC หลัก -->
                 <img alt="Creative Commons License" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1">
-                <!-- โลโก้ BY ตามที่คุณแนบรูปมา -->
                 <img alt="Attribution" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1">
             </a>
         </div>
         <span>
-		คอมพิวเตอร์ช่วยสอน (CAI) นี้ พัฒนาโดย<br>
-		นายสุทิน ชะนิดไทย <br>
-		สาขาคอมพิวเตอร์และเทคโนโลยีดิจิทัลเพื่อการศึกษา มหาวิทยาลัยราชภัฏอุตรดิตถ์<br>
-		อนุญาตให้เผยแพร่ ดัดแปลง และใช้งานต่อได้ ภายใต้สัญญาอนุญาต <br>
+            คอมพิวเตอร์ช่วยสอน (CAI) นี้ พัฒนาโดย<br>
+            นายสุทิน ชะนิดไทย <br>
+            สาขาคอมพิวเตอร์และเทคโนโลยีดิจิทัลเพื่อการศึกษา มหาวิทยาลัยราชภัฏอุตรดิตถ์<br>
+            อนุญาตให้เผยแพร่ ดัดแปลง และใช้งานต่อได้ ภายใต้สัญญาอนุญาต <br>
             <a rel="license" href="http://creativecommons.org/licenses/by/4.0/" target="_blank">Creative Commons Attribution 4.0 International (CC BY)</a>
         </span>
     </div>
@@ -267,6 +456,146 @@
 </div> <!-- ปิด container -->
 
 <script>
+    // ==========================================
+    // ระบบการนำทาง (Navigation & Slide System)
+    // ==========================================
+    const slideData = [
+        {
+            title: '<span style="color:#e74c3c;">V - Voltage (แรงดันไฟฟ้า)</span>',
+            html: `
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <i class="fas fa-car-battery" style="font-size: 80px; color: #e74c3c;"></i>
+                </div>
+                <p>
+                    <b>แรงดันไฟฟ้า</b> มีหน่วยเป็น <b>โวลต์ (V)</b> <br><br>
+                    เปรียบเสมือน <b>"ปั๊มน้ำ"</b> หรือ <b>"แรงดันน้ำ"</b> ที่คอยผลักดันให้น้ำ (ประจุไฟฟ้า) ไหลไปตามท่อ<br><br>
+                    <i style="color:#7f8c8d;">ถ่านไฟฉาย AA 1 ก้อน มีแรงดัน 1.5V, แบตเตอรี่รถยนต์มี 12V ยิ่งแรงดันมาก พลังผลักดันกระแสไฟก็ยิ่งสูงตามไปด้วย</i>
+                </p>`
+        },
+        {
+            title: '<span style="color:#3498db;">I - Current (กระแสไฟฟ้า)</span>',
+            html: `
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <i class="fas fa-water" style="font-size: 80px; color: #3498db;"></i>
+                </div>
+                <p>
+                    <b>กระแสไฟฟ้า</b> มีหน่วยเป็น <b>แอมแปร์ (A)</b> <br><br>
+                    เปรียบเสมือน <b>"ปริมาณน้ำ"</b> ที่ไหลอยู่ในท่อจริงๆ<br><br>
+                    <i style="color:#7f8c8d;">กระแสไฟฟ้านี้แหละที่ทำให้อุปกรณ์ไฟฟ้าทำงานได้ แต่ถ้ากระแสไหลเข้ามามากเกินไป อุปกรณ์ก็จะ "พัง" หรือ "ไหม้" ได้เช่นกัน!</i>
+                </p>`
+        },
+        {
+            title: '<span style="color:#27ae60;">R - Resistance (ความต้านทาน)</span>',
+            html: `
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <i class="fas fa-road-barrier" style="font-size: 80px; color: #27ae60;"></i>
+                </div>
+                <p>
+                    <b>ความต้านทาน</b> มีหน่วยเป็น <b>โอห์ม (Ω)</b> <br><br>
+                    เปรียบเสมือน <b>"วาล์วหรี่น้ำ"</b> หรือ <b>"ท่อที่ตีบแคบลง"</b><br><br>
+                    <i style="color:#7f8c8d;">ตัวต้านทานทำหน้าที่ขัดขวางการไหลของกระแสไฟ เพื่อช่วยจำกัดไม่ให้ไฟไหลเข้าอุปกรณ์มากเกินไปนั่นเอง!</i>
+                </p>`
+        },
+        {
+            title: '<span style="color:#8e44ad;">สมการที่เกี่ยวข้อง</span>',
+            html: `
+                <div style="text-align: center; margin: 25px 0; padding: 25px; background: #f8f9fa; border-radius: 12px; border: 2px dashed #8e44ad;">
+                    <h2 style="margin: 0; color: #8e44ad; font-size: 45px;">V = I × R</h2>
+                </div>
+                <p>
+                    นี่คือสมการหัวใจหลัก! จากสูตรนี้ เราสามารถสลับข้างเพื่อหาตัวที่ต้องการได้:<br><br>
+                    <b style="color:#3498db; font-size:20px;">• หาแอมป์:</b> <span style="font-family:monospace; font-size:22px;">I = V / R</span> (กระแสจะน้อยลง ถ้าความต้านทานมากขึ้น)<br><br>
+                    <b style="color:#27ae60; font-size:20px;">• หาโอห์ม:</b> <span style="font-family:monospace; font-size:22px;">R = V / I</span> (ความต้านทานที่ต้องใช้ตัดไฟส่วนเกิน)<br>
+                </p>`
+        },
+        {
+            title: '<span style="color:#f39c12;">คู่มือการใช้งาน UI เบื้องต้น</span>',
+            html: `
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <i class="fas fa-mouse-pointer" style="font-size: 80px; color: #f39c12;"></i>
+                </div>
+                <div style="font-size: 16px; line-height: 1.8; text-align: left; padding: 20px; background:var(--bg-panel); border-radius:8px; border: 1px solid var(--border-panel); color: var(--text-main);">
+                    <b>1. อ่านค่าแถบสี:</b> ลองคลิกเปลี่ยนแถบสีบนตัวต้านทาน 🎨 หรือพิมพ์เลขลงในช่อง เพื่อดูสมการแปลงรหัสสี<br><br>
+                    <b>2. โปรแกรมจำลอง:</b> ลองปรับ <b>"แรงดัน Input" (V)</b> สังเกตความเร็วของจุดสีฟ้า(อิเล็กตรอน)ที่วิ่งในวงจร ⚡ ยิ่งกระแส(I)มาก จุดยิ่งวิ่งเร็ว<br><br>
+                    <b>3. ออกแบบวงจร:</b> เลื่อนไปโหมดคำนวณด้านล่างสุด กรอกสเปคหลอด LED แล้วให้ระบบคำนวณหาค่า R ให้อัตโนมัติ 💡
+                </div>`
+        }
+    ];
+
+    let currentActiveSlide = 0;
+
+    function openSlide(index) {
+        currentActiveSlide = index;
+        
+        // ซ่อนหน้า Home และ App
+        document.getElementById('home-page').style.display = 'none';
+        document.getElementById('app-container').style.display = 'none';
+        
+        // โชว์หน้า Slide
+        const slideView = document.getElementById('slide-view');
+        slideView.style.display = 'flex';
+        
+        // ยัดข้อมูลลงหน้า
+        document.getElementById('slide-content-area').innerHTML = `
+            <h2>${slideData[index].title}</h2>
+            ${slideData[index].html}
+        `;
+
+        // จัดการปุ่ม "ย้อนกลับ"
+        const prevBtn = document.getElementById('btn-prev-slide');
+        if (index > 0) {
+            prevBtn.style.visibility = 'visible'; // โชว์ปุ่มถ้าย้อนกลับได้
+        } else {
+            prevBtn.style.visibility = 'hidden'; // ซ่อนปุ่มถ้าเป็นหน้าแรกสุด
+        }
+
+        // จัดการปุ่ม "ถัดไป / คู่มือการใช้งาน / เริ่มโปรแกรม"
+        const nextBtn = document.getElementById('btn-next-slide');
+        if (index === 3) {
+            // กรณีเป็นหน้า "สมการ" (index 3) ให้ปุ่มถัดไปเขียนว่า "คู่มือการใช้งาน"
+            nextBtn.innerHTML = 'คู่มือการใช้งาน <i class="fas fa-book"></i>';
+            nextBtn.onclick = nextSlide;
+        } else if (index < slideData.length - 1) {
+            // หน้าอื่นๆ ทั่วไป
+            nextBtn.innerHTML = 'หน้าถัดไป <i class="fas fa-arrow-right"></i>';
+            nextBtn.onclick = nextSlide;
+        } else {
+            // หน้าสุดท้าย (คู่มือ UI) ให้ปุ่มพาไปหน้า App
+            nextBtn.innerHTML = '<i class="fas fa-play"></i> เริ่มโปรแกรม';
+            nextBtn.onclick = startApp;
+        }
+    }
+
+    function nextSlide() {
+        if (currentActiveSlide < slideData.length - 1) {
+            openSlide(currentActiveSlide + 1);
+        }
+    }
+
+    function prevSlide() {
+        if (currentActiveSlide > 0) {
+            openSlide(currentActiveSlide - 1);
+        }
+    }
+
+    function goHome() {
+        document.getElementById('slide-view').style.display = 'none';
+        document.getElementById('app-container').style.display = 'none';
+        document.getElementById('home-page').style.display = 'flex';
+    }
+
+    function startApp() {
+        document.getElementById('home-page').style.display = 'none';
+        document.getElementById('slide-view').style.display = 'none';
+        document.getElementById('app-container').style.display = 'block';
+        
+        // เรียก render ครั้งแรกเมื่อเปิดหน้าแอพ
+        renderUI('ui');
+    }
+
+    // ==========================================
+    // ระบบหลักของโปรแกรม (CAI App System)
+    // ==========================================
     function toggleTheme(checkbox) {
         if(checkbox.checked) { document.body.classList.add('dark-mode'); localStorage.setItem('theme', 'dark'); } 
         else { document.body.classList.remove('dark-mode'); localStorage.setItem('theme', 'light'); }
@@ -291,8 +620,22 @@
         if(count === 3) selectedColors = ['brown', 'black', 'red'];
         if(count === 4) selectedColors = ['brown', 'black', 'red', 'gold'];
         if(count === 5) selectedColors = ['brown', 'black', 'black', 'brown', 'brown'];
-        if(count === 6) selectedColors = ['brown', 'black', 'black', 'brown', 'brown', 'red'];
         renderUI('ui');
+    }
+
+    // ฟังก์ชันช่วยในการสร้างรูปสัญกรณ์วิทยาศาสตร์
+    function formatMultiplierScientific(mult) {
+        if (mult === 1) return "10⁰";
+        if (mult === 0.1) return "10⁻¹";
+        if (mult === 0.01) return "10⁻²";
+        let exp = Math.log10(mult);
+        // ใช้ตัวอักษร superscript แทนเพื่อให้แสดงผลได้ถูกต้องทุกเบราว์เซอร์
+        const superscripts = {
+            '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', 
+            '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
+        };
+        let expStr = exp.toString().split('').map(char => superscripts[char] || char).join('');
+        return `10${expStr}`;
     }
 
     function renderUI(source) {
@@ -303,11 +646,8 @@
             let role = 'digit';
             if (currentBands === 3 && index === 2) role = 'multiplier';
             if (currentBands >= 4) {
-                if (index === currentBands - 2 && currentBands < 6) role = 'multiplier';
-                else if (index === currentBands - 3 && currentBands === 6) role = 'multiplier';
-                else if (index === currentBands - 1 && currentBands < 6) role = 'tolerance';
-                else if (index === currentBands - 2 && currentBands === 6) role = 'tolerance';
-                else if (index === currentBands - 1 && currentBands === 6) role = 'temp';
+                if (index === currentBands - 2) role = 'multiplier';
+                else if (index === currentBands - 1) role = 'tolerance';
             }
 
             Object.keys(colorDict).forEach(key => {
@@ -320,7 +660,8 @@
                 option.value = key;
                 let label = `แถบที่ ${index+1}: ${c.name}`;
                 if(role === 'digit') label += ` (${c.val})`;
-                if(role === 'multiplier') label += ` (x${formatNumber(c.mult)})`;
+                // เปลี่ยนการแสดงผลตัวคูณเป็นรูปสัญกรณ์วิทยาศาสตร์
+                if(role === 'multiplier') label += ` (x${formatMultiplierScientific(c.mult)})`;
                 if(role === 'tolerance') label += ` (±${c.tol}%)`;
                 option.text = label; if (key === color) option.selected = true;
                 select.appendChild(option);
@@ -339,8 +680,6 @@
             let marginRight = '20px', marginLeft = '0';
             if (currentBands === 4 && index === 2) marginRight = 'auto'; 
             if (currentBands === 5 && index === 3) marginRight = 'auto';
-            if (currentBands === 6 && index === 3) marginRight = 'auto';
-            if (currentBands === 6 && index === 4) { marginRight = '15px'; marginLeft = '15px'; }
             band.style.marginRight = marginRight; band.style.marginLeft = marginLeft;
             band.onclick = (e) => showColorPicker(e, index);
             body.appendChild(band);
@@ -358,11 +697,8 @@
         let role = 'digit';
         if (currentBands === 3 && bandIndex === 2) role = 'multiplier';
         if (currentBands >= 4) {
-            if (bandIndex === currentBands - 2 && currentBands < 6) role = 'multiplier';
-            else if (bandIndex === currentBands - 3 && currentBands === 6) role = 'multiplier';
-            else if (bandIndex === currentBands - 1 && currentBands < 6) role = 'tolerance';
-            else if (bandIndex === currentBands - 2 && currentBands === 6) role = 'tolerance';
-            else if (bandIndex === currentBands - 1 && currentBands === 6) role = 'temp';
+            if (bandIndex === currentBands - 2) role = 'multiplier';
+            else if (bandIndex === currentBands - 1) role = 'tolerance';
         }
 
         Object.keys(colorDict).forEach(key => {
@@ -373,7 +709,10 @@
 
             const btn = document.createElement('button'); btn.className = 'color-btn';
             let label = c.name;
-            if(role === 'digit') label += ` (${c.val})`; if(role === 'multiplier') label += ` (x${formatNumber(c.mult)})`; if(role === 'tolerance') label += ` (±${c.tol}%)`;
+            if(role === 'digit') label += ` (${c.val})`; 
+            // เปลี่ยนการแสดงผลตัวคูณในปุ่มเลือกสีเป็นสัญกรณ์วิทยาศาสตร์
+            if(role === 'multiplier') label += ` (x${formatMultiplierScientific(c.mult)})`; 
+            if(role === 'tolerance') label += ` (±${c.tol}%)`;
             btn.innerHTML = `<div class="color-dot" style="background:${c.hex}"></div> <span>${label}</span>`;
             btn.onclick = () => { selectedColors[activeBandIndex] = key; picker.style.display = 'none'; renderUI('ui'); };
             picker.appendChild(btn);
@@ -384,7 +723,6 @@
         if (!e.target.closest('.band') && !e.target.closest('#color-picker')) document.getElementById('color-picker').style.display = 'none';
     });
 
-    // ⚡ ฟังก์ชันคำนวณหา R อัตโนมัติจากโหลด
     function calculateRForLoad() {
         let vin = parseFloat(document.getElementById('input-v').value) || 0;
         let vload = parseFloat(document.getElementById('target-vload').value) || 0;
@@ -410,7 +748,6 @@
         
         updateColorsFromNumber();
         
-        // สกอลหน้าจอกลับขึ้นไปดูผลลัพธ์
         window.scrollTo({ top: 100, behavior: 'smooth' });
     }
 
@@ -445,13 +782,14 @@
 
         if (currentBands === 3) {
             digitVal = `${colorDict[selectedColors[0]].val}${colorDict[selectedColors[1]].val}`; multiplier = colorDict[selectedColors[2]].mult;
-            equationText = `หลักที่ 1: ${colorDict[selectedColors[0]].val} (${colorDict[selectedColors[0]].name})<br>หลักที่ 2: ${colorDict[selectedColors[1]].val} (${colorDict[selectedColors[1]].name})<br>ตัวคูณ: x ${formatNumber(multiplier)} (${colorDict[selectedColors[2]].name})`;
+            // เปลี่ยนการแสดงผลสมการ
+            equationText = `หลักที่ 1: ${colorDict[selectedColors[0]].val} (${colorDict[selectedColors[0]].name})<br>หลักที่ 2: ${colorDict[selectedColors[1]].val} (${colorDict[selectedColors[1]].name})<br>ตัวคูณ: x ${formatMultiplierScientific(multiplier)} (${colorDict[selectedColors[2]].name})`;
         } else if (currentBands === 4) {
             digitVal = `${colorDict[selectedColors[0]].val}${colorDict[selectedColors[1]].val}`; multiplier = colorDict[selectedColors[2]].mult; tolerance = colorDict[selectedColors[3]].tol;
-            equationText = `[ ${colorDict[selectedColors[0]].val} (${colorDict[selectedColors[0]].name}) จับคู่ ${colorDict[selectedColors[1]].val} (${colorDict[selectedColors[1]].name}) ] x ${formatNumber(multiplier)} (${colorDict[selectedColors[2]].name})<br>ความคลาดเคลื่อน ±${tolerance}% (${colorDict[selectedColors[3]].name})`;
+            equationText = `[ ${colorDict[selectedColors[0]].val} (${colorDict[selectedColors[0]].name}) จับคู่ ${colorDict[selectedColors[1]].val} (${colorDict[selectedColors[1]].name}) ] x ${formatMultiplierScientific(multiplier)} (${colorDict[selectedColors[2]].name})<br>ความคลาดเคลื่อน ±${tolerance}% (${colorDict[selectedColors[3]].name})`;
         } else {
             digitVal = `${colorDict[selectedColors[0]].val}${colorDict[selectedColors[1]].val}${colorDict[selectedColors[2]].val}`; multiplier = colorDict[selectedColors[3]].mult; tolerance = colorDict[selectedColors[4]].tol;
-            equationText = `[ ${colorDict[selectedColors[0]].val} | ${colorDict[selectedColors[1]].val} | ${colorDict[selectedColors[2]].val} ] x ${formatNumber(multiplier)}<br>ความคลาดเคลื่อน ±${tolerance}%`;
+            equationText = `[ ${colorDict[selectedColors[0]].val} | ${colorDict[selectedColors[1]].val} | ${colorDict[selectedColors[2]].val} ] x ${formatMultiplierScientific(multiplier)}<br>ความคลาดเคลื่อน ±${tolerance}%`;
         }
 
         const rawResistance = parseInt(digitVal) * multiplier;
@@ -521,139 +859,6 @@
         if (num >= 1000) return (num / 1000) + ' k';
         return formatNumber(num);
     }
-
-    window.onload = function() { renderUI('ui'); };
-</script>
-<script>
-    // --- สคริปต์ส่วนของระบบสไลด์แนะนำ (Intro Slides) ---
-    const introSlides = [
-        {
-            title: '<span style="color:#2c3e50;">ยินดีต้อนรับสู่ </br> ระบบเรียนรู้ตัวต้านทาน </br>(Interactive Resistor CAI) </span>',
-            html: `
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <i class="fas fa-bolt" style="font-size: 50px; color: #f1c40f; text-shadow: 0 0 10px rgba(241,196,15,0.5);"></i>
-                </div>
-                <h3 style="color:#2980b9; margin-bottom: 10px;">ทบทวน "กฎของโอห์ม" (Ohm's Law)</h3>
-		<h4 style="color:#5473ff; margin-bottom: 8 px:">Developed by : Suthin Chanidthai</h4>
-                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
-                    ก่อนที่เราจะไปเล่นโปรแกรมจำลอง ลองนึกภาพกระแสไฟฟ้าเหมือน <b>"น้ำไหลในท่อ"</b> <br><br>
-                    กฎของโอห์ม อธิบายความสัมพันธ์ของ 3 ตัวละครหลักในวงจรไฟฟ้า ซึ่งก็คือ <b>แรงดัน (V), กระแส (I), และความต้านทาน (R)</b> <br><br>
-                    สไลด์ต่อไปนี้จะช่วยปูพื้นฐานสั้นๆ ให้ทุกคนพร้อมลุยกับวงจรของจริง!
-                </p>`,
-            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>'
-        },
-        {
-            title: '<span style="color:#e74c3c;">V - Voltage (แรงดันไฟฟ้า)</span>',
-            html: `
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <i class="fas fa-car-battery" style="font-size: 45px; color: #e74c3c;"></i>
-                </div>
-                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
-                    <b>แรงดันไฟฟ้า</b> มีหน่วยเป็น <b>โวลต์ (V)</b> <br>
-                    เปรียบเสมือน <b>"ปั๊มน้ำ"</b> หรือ <b>"แรงดันน้ำ"</b> ที่คอยผลักดันให้น้ำ (ประจุไฟฟ้า) ไหลไปตามท่อ<br><br>
-                    <i>ถ่านไฟฉาย AA 1 ก้อน มีแรงดัน 1.5V, แบตเตอรี่รถยนต์มี 12V ยิ่งแรงดันมาก พลังผลักดันกระแสไฟก็ยิ่งสูง</i>
-                </p>`,
-            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>',
-            showCancelButton: true,
-            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
-        },
-        {
-            title: '<span style="color:#3498db;">I - Current (กระแสไฟฟ้า)</span>',
-            html: `
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <i class="fas fa-water" style="font-size: 45px; color: #3498db;"></i>
-                </div>
-                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
-                    <b>กระแสไฟฟ้า</b> มีหน่วยเป็น <b>แอมแปร์ (A)</b> <br>
-                    เปรียบเสมือน <b>"ปริมาณน้ำ"</b> ที่ไหลอยู่ในท่อจริงๆ<br><br>
-                    <i>กระแสไฟฟ้านี้แหละที่ทำให้อุปกรณ์ไฟฟ้าทำงานได้ แต่ถ้ากระแสไหลเข้ามามากเกินไป อุปกรณ์ก็จะ "พัง" หรือ "ไหม้" ได้เช่นกัน!</i>
-                </p>`,
-            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>',
-            showCancelButton: true,
-            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
-        },
-        {
-            title: '<span style="color:#27ae60;">R - Resistance (ความต้านทาน)</span>',
-            html: `
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <i class="fas fa-road-barrier" style="font-size: 45px; color: #27ae60;"></i>
-                </div>
-                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
-                    <b>ความต้านทาน</b> มีหน่วยเป็น <b>โอห์ม (Ω)</b> <br>
-                    เปรียบเสมือน <b>"วาล์วหรี่น้ำ"</b> หรือ <b>"ท่อที่ตีบแคบลง"</b><br><br>
-                    <i>ตัวต้านทานทำหน้าที่ขัดขวางการไหลของกระแสไฟ เพื่อช่วยจำกัดไม่ให้ไฟไหลเข้าอุปกรณ์มากเกินไปนั่นเอง!</i>
-                </p>`,
-            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>',
-            showCancelButton: true,
-            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
-        },
-        {
-            title: '<span style="color:#8e44ad;">สมการที่เกี่ยวข้อง</span>',
-            html: `
-                <div style="text-align: center; margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #8e44ad;">
-                    <h2 style="margin: 0; color: #8e44ad;">V = I × R</h2>
-                </div>
-                <p style="font-size: 16px; line-height: 1.6; color:#555; text-align: justify; padding: 0 10px;">
-                    นี่คือสมการหัวใจหลัก! จากสูตรนี้ เราสามารถสลับข้างเพื่อหาตัวที่ต้องการได้:<br><br>
-                    <b style="color:#3498db;">• หาแอมป์:</b> I = V / R (กระแส จะน้อยลง ถ้าความต้านทานมากขึ้น)<br>
-                    <b style="color:#27ae60;">• หาโอห์ม:</b> R = V / I (ความต้านทานที่ต้องใช้ตัดไฟ)<br>
-                </p>`,
-            confirmButtonText: 'ถัดไป <i class="fas fa-arrow-right"></i>',
-            showCancelButton: true,
-            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
-        },
-        {
-            title: '<span style="color:#d35400;">คู่มือการใช้งาน UI เบื้องต้น</span>',
-            html: `
-                <div style="font-size: 15px; line-height: 1.6; color:#555; text-align: left; padding: 10px; background:#fef9e7; border-radius:8px;">
-                    <b>1. อ่านค่าแถบสี:</b> ลองคลิกเปลี่ยนแถบสีบนตัวต้านทาน 🎨 หรือพิมพ์เลขลงในช่อง เพื่อดูสมการแปลงรหัสสี<br><br>
-                    <b>2. โปรแกรมจำลอง:</b> ลองปรับ <b>"แรงดัน Input" (V)</b> สังเกตความเร็วของจุดสีฟ้า(อิเล็กตรอน)ที่วิ่งในวงจร ⚡ ยิ่งกระแส(I)มาก จุดยิ่งวิ่งเร็ว<br><br>
-                    <b>3. ออกแบบวงจร:</b> เลื่อนไปโหมดคำนวณด้านล่างสุด กรอกสเปคหลอด LED แล้วให้ระบบคำนวณหาค่า R ให้อัตโนมัติ 💡
-                </div>`,
-            confirmButtonText: '<i class="fas fa-play"></i> เริ่มใช้งานโปรแกรม!',
-            showCancelButton: true,
-            cancelButtonText: '<i class="fas fa-arrow-left"></i> ย้อนกลับ'
-        }
-    ];
-
-    let currentSlide = 0;
-
-    function showSlide(index) {
-        if (index < 0 || index >= introSlides.length) return;
-        
-        Swal.fire({
-            ...introSlides[index],
-            width: '600px',
-            allowOutsideClick: false,
-            allowEscapeKey: false,
-            showCloseButton: true,
-            confirmButtonColor: '#3498db',
-            cancelButtonColor: '#95a5a6',
-            reverseButtons: true // เพิ่มคำสั่งนี้เพื่อสลับตำแหน่งปุ่ม ซ้าย-ขวา
-        }).then((result) => {
-            if (result.isConfirmed) {
-                if (index < introSlides.length - 1) {
-                    currentSlide++;
-                    showSlide(currentSlide);
-                } else {
-                    // ปิดสไลด์ จบการแนะนำ
-                }
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                if (index > 0) {
-                    currentSlide--;
-                    showSlide(currentSlide);
-                }
-            }
-        });
-    }
-
-    // เรียกให้สไลด์แสดงขึ้นมาทันทีเมื่อโหลดหน้าเว็บเสร็จ
-    window.addEventListener('load', function() {
-        // ดีเลย์นิดหน่อยเพื่อให้หน้าเว็บหลักโหลดเสร็จสมบูรณ์ก่อน
-        setTimeout(() => {
-            showSlide(currentSlide);
-        }, 500);
-    });
 </script>
 </body>
 </html>
